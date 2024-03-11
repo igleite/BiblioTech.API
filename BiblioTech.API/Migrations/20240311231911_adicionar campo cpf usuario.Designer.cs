@@ -3,6 +3,7 @@ using System;
 using BiblioTech.API.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BiblioTech.API.Migrations
 {
     [DbContext(typeof(BiblioTechDbContext))]
-    partial class BiblioTechDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240311231911_adicionar campo cpf usuario")]
+    partial class adicionarcampocpfusuario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

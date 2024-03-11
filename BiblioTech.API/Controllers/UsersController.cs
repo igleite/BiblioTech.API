@@ -46,12 +46,28 @@ namespace BiblioTech.API.Controllers
             return Ok(user);
         }
 
+        [HttpGet("GetByCpf/{cpf}")]
+
+        public async Task<ActionResult<UserViewModel>> GetByCpf(string cpf)
+        {
+            var user = await _BiblioTechDbContext.Users.SingleOrDefaultAsync(u => u.Cpf == cpf);
+
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            var userViewModel = user.ConvertUserByIdViewModel();
+
+            return Ok(user);
+        }
+
         [HttpPost]
 
         public async Task<IActionResult> Post(UserInputModel userInputModel)
         {
 
-            var user = new User(userInputModel.Name, userInputModel.Email);
+            var user = new User(userInputModel.Cpf, userInputModel.Name, userInputModel.Email, default);
 
             await _BiblioTechDbContext.AddAsync(user);
 
@@ -100,5 +116,44 @@ namespace BiblioTech.API.Controllers
 
         }
 
+        [HttpPost("blockUser/{id}")]
+
+        public async Task<IActionResult> BlockUser(int id, int days)
+        {
+            var user = _BiblioTechDbContext.Users.SingleOrDefault(u => u.Id == id);
+
+            if (user is null)
+            {
+                return BadRequest();
+            }
+
+            user.SetBlockedDate(DateTime.Now.AddDays(days));
+
+            _BiblioTechDbContext.Update(user);
+
+            await _BiblioTechDbContext.SaveChangesAsync();
+
+            return Ok(user);
+        }
+
+        [HttpPost("removeBlockUser/{id}")]
+
+        public async Task<IActionResult> BlockUser(int id)
+        {
+            var user = _BiblioTechDbContext.Users.SingleOrDefault(u => u.Id == id);
+
+            if (user is null)
+            {
+                return BadRequest();
+            }
+
+            user.RemoveBlockedDate();
+
+            _BiblioTechDbContext.Update(user);
+
+            await _BiblioTechDbContext.SaveChangesAsync();
+
+            return Ok(user);
+        }
     }
 }

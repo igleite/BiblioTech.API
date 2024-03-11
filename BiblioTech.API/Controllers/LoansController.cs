@@ -59,10 +59,39 @@ namespace BiblioTech.API.Controllers
         public async Task<IActionResult> Post(LoanInputModel inputModel)
         {
             var client = await _BiblioTechDbContext.Users.FirstOrDefaultAsync(u => u.Id == inputModel.IdClient);
+            var book = await _BiblioTechDbContext.Books.FirstOrDefaultAsync(b => b.Id == inputModel.IdBook);
 
             if (client is null)
             {
-                return NotFound();
+                return NotFound(new Exception("Usuario não encontrado"));
+            }
+
+            if (book is null)
+            {
+                return NotFound(new Exception("Livro não encontrado"));
+            }
+
+            if(client.BlockedDate >= DateTime.Now)
+            {
+                return BadRequest(new Exception($"Usuario possui um bloqueio por alguma pendencia e termina em {client.BlockedDate}"));
+            }
+
+            var clientLoans = _BiblioTechDbContext.BookLoans.Where(x => x.IdClient == inputModel.IdClient).ToList();
+            var bookLoans = _BiblioTechDbContext.BookLoans.Where(x => x.IdBook == inputModel.IdBook).ToList();
+
+            if(clientLoans.Count == 3)
+            {
+                return BadRequest(new Exception("Quantidade Maxima de Emprestimos excedida"));
+            }
+
+            if (clientLoans.Any(x => x.Devolution < DateTime.Now))
+            {
+                return BadRequest(new Exception("Usuario com livros em pendentes a serem devolvidos"));
+            }
+
+            if(bookLoans.Count > 0)
+            {
+                return BadRequest(new Exception("O Livro já foi está emprestado"));
             }
 
             var loan = new BookLoan(inputModel.IdClient, inputModel.IdBook);

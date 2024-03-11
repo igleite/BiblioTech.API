@@ -21,7 +21,10 @@ namespace BiblioTech.API.MappingViewModels
         {
             return new UserViewModel
             {
+                Id = users.Id,
+                Cpf = users.Cpf,
                 Name = users.Name,
+                Email = users.Email,
             };
         }
 

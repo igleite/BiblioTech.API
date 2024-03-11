@@ -3,6 +3,7 @@ using System;
 using BiblioTech.API.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BiblioTech.API.Migrations
 {
     [DbContext(typeof(BiblioTechDbContext))]
-    partial class BiblioTechDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240311224434_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,10 +83,6 @@ namespace BiblioTech.API.Migrations
 
                     b.Property<DateTime?>("BlockedDate")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Cpf")
-                        .IsRequired()
-                        .HasColumnType("longtext");
 
                     b.Property<string>("Email")
                         .IsRequired()
