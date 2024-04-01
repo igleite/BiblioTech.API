@@ -13,7 +13,7 @@ builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddControllers();
 
 builder.Services.AddDbContext<BiblioTechDbContext>(options =>
-    options.UseMySql("server=localhost;port=3307;database=meubanco;uid=root;password=alunos", ServerVersion.AutoDetect("server=localhost;port=3307;database=meubanco;uid=root;password=alunos")));
+    options.UseMySql(builder.Configuration.GetConnectionString("UseMySql"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("UseMySql"))));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -34,7 +34,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.ApplyMigrations();
+    //app.ApplyMigrations();
 }
 
 app.UseHttpsRedirection();

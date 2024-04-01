@@ -11,6 +11,7 @@ namespace BiblioTech.API.MappingViewModels
             return (from book in books
                     select new BookViewModel
                     {
+                       Id = book.Id,
                        Author = book.Author,
                        ISBN = book.ISBN,
                        PublicationYear = book.PublicationYear,
@@ -25,10 +26,11 @@ namespace BiblioTech.API.MappingViewModels
             return new BookViewModel
 
             {
-               Author = books.Author,
-               ISBN = books.ISBN,
-               PublicationYear = books.PublicationYear,
-               Title = books.Title,
+                Id = books.Id,
+                Author = books.Author,
+                ISBN = books.ISBN,
+                PublicationYear = books.PublicationYear,
+                Title = books.Title,
             };
         }
     }
