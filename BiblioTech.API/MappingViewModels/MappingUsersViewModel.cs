@@ -11,7 +11,10 @@ namespace BiblioTech.API.MappingViewModels
             return (from user in users
                     select new UserViewModel
                     {
+                        Id = user.Id,
+                        Cpf = user.Cpf,
                         Name = user.Name,
+                        Email = user.Email,
 
                     }).ToList();
         }
