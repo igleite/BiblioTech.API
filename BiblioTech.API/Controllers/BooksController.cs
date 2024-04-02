@@ -50,6 +50,22 @@ namespace BiblioTech.API.Controllers
             return Ok(bookViewModel);
         }
 
+        [HttpGet("{title}")]
+        public async Task<ActionResult<IList<BookViewModel>>> GetByTitle(string title)
+        {
+
+            var book = await _BiblioTechDbContext.Books.Where(b => b.Title.Contains(title)).ToListAsync();
+
+            if (book is null)
+            {
+                return NotFound();
+            }
+
+            var bookViewModel = book.ConvertBookViewModel();
+
+            return Ok(bookViewModel);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post(BookInputModel bookInputModel)
         {
