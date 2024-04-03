@@ -50,7 +50,7 @@ namespace BiblioTech.API.Controllers
             return Ok(bookViewModel);
         }
 
-        [HttpGet("{title}")]
+        [HttpGet("GetByTitle/{title}")]
         public async Task<ActionResult<IList<BookViewModel>>> GetByTitle(string title)
         {
 
