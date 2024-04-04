@@ -6,5 +6,6 @@
         public string Cpf {  get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
+        public DateTime? BlockedDate { get; set; }
     }
 }

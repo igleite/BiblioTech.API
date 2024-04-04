@@ -15,6 +15,7 @@ namespace BiblioTech.API.MappingViewModels
                         Cpf = user.Cpf,
                         Name = user.Name,
                         Email = user.Email,
+                        BlockedDate = user.BlockedDate,
 
                     }).ToList();
         }
@@ -28,6 +29,7 @@ namespace BiblioTech.API.MappingViewModels
                 Cpf = users.Cpf,
                 Name = users.Name,
                 Email = users.Email,
+                BlockedDate = users.BlockedDate,
             };
         }
 
