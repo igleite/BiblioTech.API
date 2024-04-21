@@ -5,6 +5,7 @@ using BiblioTech.API.Models.ViewModels;
 using BiblioTech.API.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace BiblioTech.API.Controllers
 {
@@ -50,16 +51,18 @@ namespace BiblioTech.API.Controllers
 
         public async Task<ActionResult<UserViewModel>> GetByCpf(string cpf)
         {
-            var user = await _BiblioTechDbContext.Users.SingleOrDefaultAsync(u => u.Cpf == cpf);
+            var users = await _BiblioTechDbContext.Users.ToListAsync();
 
-            if (user is null)
+            if (users is null || string.IsNullOrEmpty(cpf))
             {
                 return NotFound();
             }
 
-            var userViewModel = user.ConvertUserByIdViewModel();
+            var filteredUsers = users.Where(u => u.Cpf.Contains(cpf, StringComparison.CurrentCultureIgnoreCase)).ToList();
 
-            return Ok(user);
+            var userViewModel = filteredUsers.ConvertUserToViewModel();
+
+            return Ok(userViewModel);
         }
 
         [HttpPost]
