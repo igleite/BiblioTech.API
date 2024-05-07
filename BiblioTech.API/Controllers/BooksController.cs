@@ -89,7 +89,7 @@ namespace BiblioTech.API.Controllers
 
             if (book is null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
             book.UpdateBook(bookUpdated.Title, bookUpdated.Author, bookUpdated.ISBN, bookUpdated.PublicationYear);
