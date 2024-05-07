@@ -79,13 +79,13 @@ namespace BiblioTech.API.Controllers
             return CreatedAtAction(nameof(GetById), new {id = book.Id}, book);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, BookInputModel bookUpdated)
+        [HttpPut()]
+        public async Task<IActionResult> Update(BookInputModelUpdate bookUpdated)
         {
 
             var book = await _BiblioTechDbContext
                              .Books
-                             .SingleOrDefaultAsync(b => b.Id == id);
+                             .SingleOrDefaultAsync(b => b.Id == bookUpdated.Id);
 
             if (book is null)
             {
