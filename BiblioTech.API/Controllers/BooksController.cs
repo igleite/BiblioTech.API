@@ -29,7 +29,7 @@ namespace BiblioTech.API.Controllers
                 return BadRequest();
             }
 
-            var booksViewModel = books.ConvertBookViewModel();
+            var booksViewModel = await LivroEmprestado(books.ConvertBookViewModel());
 
             return Ok(booksViewModel);
         }
@@ -45,7 +45,7 @@ namespace BiblioTech.API.Controllers
                 return NotFound();
             }
             
-            var bookViewModel = book.ConvertBookViewModelById();
+            var bookViewModel = await LivroEmprestado(book.ConvertBookViewModelById());
 
             return Ok(bookViewModel);
         }
@@ -61,7 +61,7 @@ namespace BiblioTech.API.Controllers
                 return NotFound();
             }
 
-            var bookViewModel = book.ConvertBookViewModel();
+            var bookViewModel = await LivroEmprestado(book.ConvertBookViewModel());
 
             return Ok(bookViewModel);
         }
@@ -117,5 +117,21 @@ namespace BiblioTech.API.Controllers
             return Ok(book);
         }
 
+
+        private async Task<IEnumerable<BookViewModel>> LivroEmprestado(IEnumerable<BookViewModel> booksViewModel)
+        {
+            foreach (var book in booksViewModel)
+            {
+                book.Emprestado = await _BiblioTechDbContext.BookLoans.AnyAsync(x => x.IdBook == book.Id);
+            }
+
+            return booksViewModel.OrderBy(x => x.Emprestado);
+        }
+
+        private async Task<BookViewModel> LivroEmprestado(BookViewModel book)
+        {
+            book.Emprestado = await _BiblioTechDbContext.BookLoans.AnyAsync(x => x.IdBook == book.Id);
+            return book;
+        }
     }
 }

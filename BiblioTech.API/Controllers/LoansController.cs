@@ -154,7 +154,7 @@ namespace BiblioTech.API.Controllers
 
         public async Task<IActionResult> Delete (int id)
         {
-            var loan = await _BiblioTechDbContext.BookLoans.SingleOrDefaultAsync(e => e.Id == id);
+            var loan = await _BiblioTechDbContext.BookLoans.FirstOrDefaultAsync(e => e.IdBook == id);
 
             if (loan is null)
             {
