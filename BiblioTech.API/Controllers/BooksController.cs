@@ -20,7 +20,7 @@ namespace BiblioTech.API.Controllers
         }
 
         [HttpGet]
-        public async Task <ActionResult<IEnumerable<BookViewModel>>> GetAll()
+        public async Task<ActionResult<IEnumerable<BookViewModel>>> GetAll()
         {
             var books = await _BiblioTechDbContext.Books.ToListAsync();
 
@@ -37,14 +37,13 @@ namespace BiblioTech.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<BookViewModel>> GetById(int id)
         {
-
             var book = await _BiblioTechDbContext.Books.SingleOrDefaultAsync(b => b.Id == id);
 
             if (book is null)
             {
                 return NotFound();
             }
-            
+
             var bookViewModel = await LivroEmprestado(book.ConvertBookViewModelById());
 
             return Ok(bookViewModel);
@@ -53,7 +52,6 @@ namespace BiblioTech.API.Controllers
         [HttpGet("GetByTitle/{title}")]
         public async Task<ActionResult<IList<BookViewModel>>> GetByTitle(string title)
         {
-
             var book = await _BiblioTechDbContext.Books.Where(b => b.Title.Contains(title)).ToListAsync();
 
             if (book is null)
@@ -69,23 +67,22 @@ namespace BiblioTech.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(BookInputModel bookInputModel)
         {
-
-            var book = new Book(bookInputModel.Title, bookInputModel.Author, bookInputModel.ISBN, bookInputModel.PublicationYear);
+            var book = new Book(bookInputModel.Title, bookInputModel.Author, bookInputModel.ISBN,
+                bookInputModel.PublicationYear);
 
             await _BiblioTechDbContext.AddAsync(book);
 
             await _BiblioTechDbContext.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetById), new {id = book.Id}, book);
+            return CreatedAtAction(nameof(GetById), new { id = book.Id }, book);
         }
 
         [HttpPut()]
         public async Task<IActionResult> Update(BookInputModelUpdate bookUpdated)
         {
-
             var book = await _BiblioTechDbContext
-                             .Books
-                             .SingleOrDefaultAsync(b => b.Id == bookUpdated.Id);
+                .Books
+                .SingleOrDefaultAsync(b => b.Id == bookUpdated.Id);
 
             if (book is null)
             {
@@ -97,7 +94,6 @@ namespace BiblioTech.API.Controllers
             await _BiblioTechDbContext.SaveChangesAsync();
 
             return Ok(book);
-
         }
 
         [HttpDelete("{id}")]
@@ -117,12 +113,11 @@ namespace BiblioTech.API.Controllers
             return Ok(book);
         }
 
-
         private async Task<IEnumerable<BookViewModel>> LivroEmprestado(IEnumerable<BookViewModel> booksViewModel)
         {
             foreach (var book in booksViewModel)
             {
-                book.Emprestado = await _BiblioTechDbContext.BookLoans.AnyAsync(x => x.IdBook == book.Id);
+                await ObterEmprestimo(book.Id, book);
             }
 
             return booksViewModel.OrderBy(x => x.Emprestado);
@@ -130,8 +125,37 @@ namespace BiblioTech.API.Controllers
 
         private async Task<BookViewModel> LivroEmprestado(BookViewModel book)
         {
-            book.Emprestado = await _BiblioTechDbContext.BookLoans.AnyAsync(x => x.IdBook == book.Id);
+            await ObterEmprestimo(book.Id, book);
             return book;
+        }
+
+        private async Task ObterEmprestimo(int id, BookViewModel book)
+        {
+            var bookLoan = await _BiblioTechDbContext.BookLoans.FirstOrDefaultAsync(x => x.IdBook == id);
+
+            if (bookLoan?.IdClient == null)
+            {
+                book.Emprestado = false;
+                return;
+            }
+
+            var user = await ObterUsuario(bookLoan.IdClient);
+
+            book.Emprestado = user != null;
+            book.EmprestadoPara = user;
+        }
+
+        private async Task<UserViewModel?> ObterUsuario(int id)
+        {
+            var user = await _BiblioTechDbContext.Users.SingleOrDefaultAsync(u => u.Id == id);
+
+            if (user is null)
+            {
+                return null;
+            }
+
+            return user.ConvertUserByIdViewModel();
+
         }
     }
 }

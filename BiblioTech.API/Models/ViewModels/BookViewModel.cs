@@ -8,5 +8,6 @@
         public string ISBN { get; set; }
         public int PublicationYear { get; set; }
         public bool Emprestado { get; set; }
+        public UserViewModel? EmprestadoPara { get; set; }
     }
 }
